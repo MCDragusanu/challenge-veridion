@@ -1,4 +1,6 @@
 import os
+import re
+import xml.sax.saxutils as saxutils
 
 class TreeNode:
     def __init__(self, value):
@@ -6,7 +8,7 @@ class TreeNode:
         self.children = {}
         self.logos = []
         self.original_routes = []  # Stores original route strings
-
+        
     def add_child(self, part):
         if part not in self.children:
             self.children[part] = TreeNode(part)
@@ -17,11 +19,19 @@ class TreeNode:
 
 
 class Tree:
-    def __init__(self):
+    def __init__(self , treeId):
         self.root = TreeNode("ROOT")
         self.routes = []
+        self.routes_ids = []
+        self.treeId = treeId
 
-    def insert_route(self, route, logo_data=None):
+    def getRoot(self):
+        return self.routes[0]
+        
+    def getId(self):
+        return self.treeId
+    
+    def insert_route(self, route, route_id,logo_data=None):
         """
         Inserts a full route like 'nike.com/shoes-men'.
         Splits on '.', '/', '-' for tree structure,
@@ -39,6 +49,7 @@ class Tree:
 
         current.original_routes.append(original_route)
         self.routes.append(original_route)
+        self.routes_ids.append(route_id)
 
     def get_all_routes(self):
         """
@@ -52,52 +63,78 @@ class Tree:
                 dfs(child)
 
         dfs(self.root)
-        return all_routes
+        return all_routes , self.routes_ids
 
     def __repr__(self):
         return f"Tree(root={self.root})"
 
 
-def save_tree_to_file(file_path, tree: Tree) -> bool:
+def save_tree_to_file(file_path, tree, keywords, logo) -> bool:
     try:
-        with open(file_path, 'w') as f:
-            def dfs(node: TreeNode):
-                for child_value, child_node in node.children.items():
-                    f.write(f"{node.value} -> {child_value}\n")
-                    dfs(child_node)
-            dfs(tree.root)
-        print(f"[✓] Tree saved to {file_path}")
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(f'<Tree id = "{tree.getId()}" root_element = {tree.getRoot()}>')
+            f.write('\n\t<Routes>')
+
+            urls , ids = tree.get_all_routes()
+            for url_index in range(len(urls)):
+                try:
+                    safe_url = saxutils.escape(urls[url_index])
+                    safe_logo = saxutils.escape(logo if logo else "")
+                    safe_keywords = [saxutils.escape(k) for k in (keywords or [])]
+
+                    f.write(f'\n\t\t<Route id = "{ids[url_index]}">')
+                    f.write(f'\n\t\t\t<Domain>{safe_url}</Domain>')
+                    f.write(f'\n\t\t\t<Logo>{safe_logo}</Logo>')
+                    f.write(f'\n\t\t\t<Keywords>')
+
+                    for kw in safe_keywords:
+                        f.write(f'\n\t\t\t\t<Keyword>{kw}</Keyword>')
+
+                    f.write(f'\n\t\t\t</Keywords>')
+                    f.write(f'\n\t\t</Route>')
+
+                except Exception as e:
+                    print(f"[!] Skipped URL due to write error: {urls[url_index]} — {e}")
+                    continue  # Prevent breaking the full file on one bad entry
+
+            f.write('\n\t</Routes>')
+            f.write(f'</Tree>')
+            print(f"[✓] Tree saved to {file_path}")
         return True
+
     except Exception as e:
         print(f"[Error] Failed to save tree: {e}")
         return False
 
-
 def load_tree_from_file(file_path) -> Tree:
     if not os.path.exists(file_path):
-        print(f"Couldn't load tree structure from: {file_path}")
+        print(f"[✗] Couldn't load tree structure from: {file_path}")
         return None
 
     tree = Tree()
-    nodes = {"ROOT": tree.root}
 
     try:
         with open(file_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if '->' not in line:
-                    continue
-                parent, child = map(str.strip, line.split('->', 1))
+            content = f.read()
 
-                if parent not in nodes:
-                    nodes[parent] = TreeNode(parent)
-                if child not in nodes:
-                    nodes[child] = TreeNode(child)
+        # Extract content between <Routes>...</Routes>
+        routes_body_match = re.search(r"<Routes>([\s\S]*?)<\/Routes>", content)
+        if not routes_body_match:
+            print("[✗] No <Routes> block found in file.")
+            return None
 
-                nodes[parent].children[child] = nodes[child]
+        routes_body = routes_body_match.group(1)
+
+        # Extract all URLs from <Route>...</Route>
+        urls = re.findall(r"<Route>(.*?)<\/Route>", routes_body)
+
+        for url in urls:
+            tree.insert_route(url.strip())
 
         print(f"[✓] Tree loaded from {file_path}")
+        print(tree.get_all_routes())
         return tree
+
     except Exception as e:
         print(f"[Error] Failed to load tree: {e}")
         return None
