@@ -15,12 +15,12 @@ brand
 
 - So now i would say the problem is transformed into comparing two different classes atributes, and seeing how different they are. I'm thinking of using something like a **vector model**  to represent them into a geometric space and computing the dot product to check for similarities 
 
-**Stage 1**
+## Stage 1
 
-## Step1 : Extracting and grouping the related urls
+**Step1 : Extracting and grouping the related urls**
 - The archive is unpacked and sorted in asc order.Now the urls are processed and begin building the trees. After the trees are built they are issued an uid and are traversed and the urls are grouped together and stored in a xml file inside the `trees` directory, with the file name being uid of the tree and each route is assigned a custom uid.
 
-## Step2 : Extracting logos and metadata
+**Step2 : Extracting logos and metadata**
 -  For each page that url points to, will be scraped for logos and keywords information related to the domain.
 -  There will be 2 parts of data for each route. Route related metadata like keywords for that page that was scraped and stored in it's coresponding `tree_id_.xml`. In the directory `dataset\logos\tree_{tree_uid}` will be saved all the features for the logo like this `logo_route_{route_id}_features.csv` so now each route is linked to it's logo and metadata features. For now will extract simple image features.
 - All the images have been resized to fixed size 224 x 224 and basic features are extracted
@@ -32,7 +32,7 @@ brand
 - all the information necessary has been easeally grouped together for each route
 - the structure is ready to begin the image processing and more complex features to be extracted 
 
-**Stage 2**
+## Stage 2
 
 In stage 2 i will try and reduce the number of trees. My first idea is to handle the second point from above.I will make pair wise comparisons between logos of different trees. The simplest approach would be to check if the features.
 Let's assume:
