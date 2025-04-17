@@ -1,0 +1,134 @@
+TREE CLUSTERING RESULTS
+======================
+
+Original number of trees: 1580
+Distance threshold (normalized): 0.1
+Number of trees after merging: 639
+Reduction: 941 trees (59.56%)
+
+Mergeable Tree Clusters:
+Cluster 144: Trees [1, 312, 448, 652, 712, 1050, 1066, 1069, 1070, 1150, 1260, 1272, 1304, 1306, 1307, 1308, 1309, 1310, 1311, 1312, 1313, 1315, 1316, 1317, 1319, 1320, 1321, 1322, 1323, 1324] can be merged
+Cluster 243: Trees [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 79, 80, 81, 82, 83, 84, 85, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 195, 196, 197, 198, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 362, 363, 364, 365, 735, 826, 880, 896, 1001, 1082, 1089, 1104, 1534] can be merged
+Cluster 53: Trees [38, 58, 89, 199, 286, 385, 386, 435, 441, 596, 601, 672, 796, 1032, 1143, 1155, 1156] can be merged
+Cluster 10: Trees [87, 729, 730, 939, 1026, 1038, 1083, 1085] can be merged
+Cluster 246: Trees [194, 637, 638, 1403] can be merged
+Cluster 232: Trees [219, 560, 888, 891, 1569] can be merged
+Cluster 236: Trees [221, 388, 444, 748, 894, 1035, 1113, 1189, 1190, 1191, 1193, 1195, 1196, 1237, 1366, 1434, 1539] can be merged
+Cluster 126: Trees [222, 368, 438, 673, 777, 884, 926, 1300, 1390, 1501, 1514, 1515, 1516, 1517, 1530] can be merged
+Cluster 57: Trees [223, 576, 602, 627, 643, 658, 820, 852, 873, 901, 902, 979, 1009, 1228, 1353, 1393, 1401, 1413, 1414, 1415, 1418, 1419, 1421, 1423, 1424, 1425, 1426, 1427, 1428, 1431, 1433, 1435, 1436, 1437, 1439, 1440, 1441, 1443, 1444, 1445, 1447, 1448, 1449, 1451, 1453, 1454, 1455, 1457, 1459, 1460, 1462, 1463, 1465, 1466, 1467, 1468, 1469, 1470, 1471, 1521, 1528, 1573] can be merged
+Cluster 107: Trees [231, 233, 320, 624, 1087, 1088, 1093, 1492] can be merged
+Cluster 138: Trees [232, 254, 336, 430, 451, 572, 594, 613, 697, 741, 758, 779, 833, 839, 849, 871, 892, 935, 1027, 1031, 1098, 1411, 1461, 1540] can be merged
+Cluster 143: Trees [236, 264, 270] can be merged
+Cluster 40: Trees [238, 878, 1153] can be merged
+Cluster 22: Trees [239, 240, 241, 344] can be merged
+Cluster 46: Trees [242, 262] can be merged
+Cluster 235: Trees [244, 837] can be merged
+Cluster 151: Trees [245, 338, 1371] can be merged
+Cluster 179: Trees [248, 249, 994] can be merged
+Cluster 102: Trees [250, 1348] can be merged
+Cluster 198: Trees [251, 422, 423, 883, 941, 1280] can be merged
+Cluster 183: Trees [253, 271, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 598, 1209, 1519] can be merged
+Cluster 146: Trees [255, 308, 371, 419, 420, 421, 445, 704, 822, 1034, 1044, 1305] can be merged
+Cluster 225: Trees [258, 406, 410, 660, 1166, 1296, 1508, 1542] can be merged
+Cluster 54: Trees [260, 272, 585, 847, 927, 944, 997, 1011, 1041, 1059, 1065, 1080, 1201, 1299, 1473] can be merged
+Cluster 25: Trees [266, 288, 389, 554, 588, 645, 721, 1314, 1395, 1493, 1531] can be merged
+Cluster 203: Trees [267, 305, 306] can be merged
+Cluster 261: Trees [273, 680, 904] can be merged
+Cluster 11: Trees [274, 766, 877] can be merged
+Cluster 252: Trees [276, 789, 1199] can be merged
+Cluster 86: Trees [279, 280, 809] can be merged
+Cluster 245: Trees [282, 874, 924, 1073, 1074, 1126, 1207, 1350, 1389] can be merged
+Cluster 147: Trees [283, 648, 781, 782, 783, 1071, 1399] can be merged
+Cluster 177: Trees [285, 1363, 1527] can be merged
+Cluster 168: Trees [287, 825, 1148] can be merged
+Cluster 127: Trees [293, 294, 668, 830, 995, 1357] can be merged
+Cluster 69: Trees [295, 629, 942, 1040, 1244, 1478, 1549] can be merged
+Cluster 221: Trees [296, 599, 600, 780, 1077, 1340] can be merged
+Cluster 238: Trees [302, 425, 434, 595, 698, 737, 776, 929, 1117, 1124, 1127, 1129, 1136, 1138, 1161, 1230, 1356, 1364, 1368, 1430, 1504, 1544] can be merged
+Cluster 226: Trees [303, 725] can be merged
+Cluster 263: Trees [304, 1248] can be merged
+Cluster 152: Trees [307, 360, 376, 377, 577, 597, 711, 804, 838, 930, 938, 1023, 1030, 1149, 1334, 1341, 1388, 1416, 1500, 1511, 1579, 1580] can be merged
+Cluster 131: Trees [309, 793, 1016] can be merged
+Cluster 184: Trees [310, 907, 908, 909, 911, 1200, 1219] can be merged
+Cluster 55: Trees [314, 315, 641, 642, 739, 1381, 1561] can be merged
+Cluster 101: Trees [317, 436, 899, 1099, 1100, 1553] can be merged
+Cluster 214: Trees [321, 407, 412] can be merged
+Cluster 234: Trees [328, 584, 623, 738, 835] can be merged
+Cluster 33: Trees [330, 1495] can be merged
+Cluster 12: Trees [332, 333, 429, 614, 759, 773, 803, 1075, 1154, 1167, 1233, 1283, 1328, 1409, 1429, 1476, 1513, 1556] can be merged
+Cluster 145: Trees [337, 751, 810] can be merged
+Cluster 65: Trees [339, 571] can be merged
+Cluster 224: Trees [340, 770] can be merged
+Cluster 167: Trees [341, 644, 749, 1285, 1568] can be merged
+Cluster 67: Trees [342, 1339] can be merged
+Cluster 254: Trees [343, 1360] can be merged
+Cluster 216: Trees [345, 786, 914, 1231, 1365] can be merged
+Cluster 233: Trees [349, 413, 414, 417, 671, 679, 726, 1284, 1301, 1450, 1502, 1563, 1564, 1566, 1567, 1571] can be merged
+Cluster 164: Trees [352, 354, 355] can be merged
+Cluster 178: Trees [356, 998, 1474] can be merged
+Cluster 56: Trees [366, 382, 546, 547, 550, 551, 553, 555, 556, 558, 559, 561, 565, 567, 568, 604, 656, 691, 740, 756, 784, 819, 1022, 1158, 1286, 1288, 1477, 1532, 1543] can be merged
+Cluster 7: Trees [372, 827, 954, 1132, 1140, 1165, 1275, 1276] can be merged
+Cluster 47: Trees [378, 605, 666, 788, 1525] can be merged
+Cluster 188: Trees [391, 1163] can be merged
+Cluster 48: Trees [392, 418, 1202, 1239, 1291] can be merged
+Cluster 194: Trees [395, 639] can be merged
+Cluster 128: Trees [397, 669, 799, 1101, 1159] can be merged
+Cluster 82: Trees [399, 449, 913, 923, 1343, 1346, 1349, 1488] can be merged
+Cluster 50: Trees [400, 1067, 1096, 1164, 1263, 1405] can be merged
+Cluster 227: Trees [401, 583, 662, 689, 947, 977, 1106] can be merged
+Cluster 230: Trees [402, 622, 695, 980, 981, 982, 983, 984, 985] can be merged
+Cluster 88: Trees [405, 1211, 1212, 1214] can be merged
+Cluster 32: Trees [411, 416, 606, 607, 608, 610, 693, 718, 1229, 1249] can be merged
+Cluster 97: Trees [415, 1008, 1232, 1234, 1250] can be merged
+Cluster 165: Trees [427, 634, 734, 742, 768, 771, 772, 1020, 1562] can be merged
+Cluster 13: Trees [432, 1091, 1297, 1555] can be merged
+Cluster 139: Trees [433, 667, 1505, 1526] can be merged
+Cluster 149: Trees [440, 931, 1391] can be merged
+Cluster 200: Trees [442, 631, 677, 678, 722] can be merged
+Cluster 202: Trees [450, 1036, 1347] can be merged
+Cluster 140: Trees [452, 1335, 1336] can be merged
+Cluster 3: Trees [454, 1362] can be merged
+Cluster 81: Trees [456, 921, 1394] can be merged
+Cluster 215: Trees [469, 1024, 1025, 1037] can be merged
+Cluster 199: Trees [543, 1392] can be merged
+Cluster 191: Trees [548, 552] can be merged
+Cluster 66: Trees [562, 1432, 1464] can be merged
+Cluster 30: Trees [566, 676, 694, 807, 1045, 1046, 1047] can be merged
+Cluster 237: Trees [573, 794, 800, 1014, 1033] can be merged
+Cluster 265: Trees [574, 932, 955, 1279] can be merged
+Cluster 190: Trees [580, 1385] can be merged
+Cluster 27: Trees [581, 1002, 1108] can be merged
+Cluster 195: Trees [591, 630, 752, 844, 1116, 1507] can be merged
+Cluster 266: Trees [609, 650, 709, 1125, 1130, 1131, 1133, 1134, 1137, 1139, 1141] can be merged
+Cluster 260: Trees [612, 992, 993, 1538] can be merged
+Cluster 43: Trees [618, 743, 1157, 1337, 1338] can be merged
+Cluster 106: Trees [620, 714, 824, 1282, 1373, 1374] can be merged
+Cluster 132: Trees [621, 685, 1147, 1217, 1290, 1332, 1483] can be merged
+Cluster 256: Trees [651, 1358, 1361] can be merged
+Cluster 103: Trees [655, 1007] can be merged
+Cluster 217: Trees [657, 1372] can be merged
+Cluster 129: Trees [681, 682, 683, 684, 686, 687] can be merged
+Cluster 247: Trees [700, 802] can be merged
+Cluster 251: Trees [701, 710, 763, 765, 1006] can be merged
+Cluster 63: Trees [702, 703, 1479] can be merged
+Cluster 142: Trees [706, 707, 708] can be merged
+Cluster 31: Trees [717, 1057, 1578] can be merged
+Cluster 244: Trees [719, 1168, 1169, 1574] can be merged
+Cluster 52: Trees [728, 731, 732, 1536, 1537] can be merged
+Cluster 80: Trees [733, 1344, 1387] can be merged
+Cluster 124: Trees [750, 1572] can be merged
+Cluster 201: Trees [757, 988, 999, 1000, 1110, 1111] can be merged
+Cluster 9: Trees [792, 840, 1094] can be merged
+Cluster 213: Trees [798, 1122] can be merged
+Cluster 123: Trees [823, 1559] can be merged
+Cluster 239: Trees [879, 1206, 1386, 1523] can be merged
+Cluster 96: Trees [900, 934, 1402] can be merged
+Cluster 45: Trees [991, 1107] can be merged
+Cluster 229: Trees [1018, 1162] can be merged
+Cluster 87: Trees [1051, 1052, 1408] can be merged
+Cluster 105: Trees [1090, 1326] can be merged
+Cluster 23: Trees [1114, 1253] can be merged
+Cluster 26: Trees [1135, 1496, 1570] can be merged
+Cluster 189: Trees [1221, 1222, 1223, 1225] can be merged
+Cluster 192: Trees [1277, 1278] can be merged
+Cluster 99: Trees [1545, 1547] can be merged

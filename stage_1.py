@@ -17,6 +17,7 @@ def unpack_dataset(directory_path , dataset_name):
     ## construct the path of the target file
     dataset_path = os.path.join(directory_path , dataset_name)
     
+    print(dataset_path)
     ## check if the file has been found
     if not os.path.exists(dataset_path):
         print("Couldn't find dataset file!")
@@ -41,8 +42,6 @@ def create_tree(url , root , tree_dictionary, route_id):
     tree.insert_route(url , route_id)
     tree_dictionary[root] = tree
    
-   
-
 def persist_tree(root , tree_dictionary, keywords , logo):
     tree  = tree_dictionary[root]
     file_path = os.path.join('dataset','trees' , f'tree_{tree.getId()}.xml')
@@ -50,8 +49,11 @@ def persist_tree(root , tree_dictionary, keywords , logo):
 
 def store_logo_features(file_path, pd_frame):
     try:
-        pd_frame.to_csv(file_path, index=False)
-        print(f"[✓] Data saved to: {file_path}")
+        if pd_frame is not None:  
+            pd_frame.to_csv(file_path, index=False)
+            print(f"[✓] Data saved to: {file_path}")
+        else:
+            print("No Logo data found")
         return True
     except Exception as e:
         print(f"[Error] Could not save to CSV: {e}")
@@ -86,7 +88,6 @@ def process_url(url , tree_dictionary , logos_directory = 'dataset/logos/' ):
     data = scrape_site_info(url)
     keywords = data["keywords"]
     logo = data["logo"]
-    print(data)
     persist_tree(head , tree_dictionary , keywords , logo)
     current_tree = tree_dictionary[head]
     image = get_bgr_matrix_from_url(logo)
@@ -95,7 +96,7 @@ def process_url(url , tree_dictionary , logos_directory = 'dataset/logos/' ):
     folder_path = os.path.join(logos_directory , f'tree_{current_tree.getId()}')
     
     if not os.path.exists(folder_path):
-        os.mkdir(folder_path) 
+        os.mkdir(folder_path , mode= 777) 
     
     dest_path = os.path.join(folder_path , f'logo_route_{route_id}_features.csv')
     store_logo_features(dest_path , features)
@@ -106,7 +107,7 @@ def process_url(url , tree_dictionary , logos_directory = 'dataset/logos/' ):
 tree_dictionary  = {}
 
 dataset_folder = 'dataset/original'
-dataset_name = 'logos.snappy (1).parquet'
+dataset_name = 'dataset.parquet'
 
 frames = unpack_dataset(dataset_folder , dataset_name)
 
@@ -114,6 +115,12 @@ frames = unpack_dataset(dataset_folder , dataset_name)
 frames = frames.sort_values(by="domain")
 
 tree_directory = 'dataset/trees'
+logo_directory = 'dataset/logos'
+
+#cleaning up the dataset directories
+if os.path.exists(logo_directory):
+    for file in os.listdir(logo_directory):
+        os.rmdir(os.path.join(logo_directory,file))
 
 if os.path.exists(tree_directory):
     for file in os.listdir(tree_directory):

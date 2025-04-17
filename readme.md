@@ -38,8 +38,44 @@ In stage 2 i will try and reduce the number of trees. My first idea is to handle
 Let's assume:
 - Tree_X has {l_1_x^t .... l_n_x^t } logos where l_i_x is the feature vector of a logo of tree of id X
 - Tree_Y has {l_1_y^t .... l_m_y^t } logos where l_i_y is the feature vector of a logo of tree of id Y
-- similarity =Sum(euclidian(l_i_x , l_j_y)). If m != n, will be computed with euclidian(l_i_x , 0)||euclidian(l_j_y , 0).
-- In scenarios where 2 trees would be of size 1 and have similar images similarity -> 0 and the trees can be merged. Will store somewhere that {X,Y,Z....} can be merged. 
+- similarity =avg (euclidian(l_i_x , l_j_y)). If m != n, will be computed with euclidian(l_i_x , 0)||euclidian(l_j_y , 0).
+- In scenarios where 2 trees would be of size 1 and have similar images then similarity -> 0 and the trees can be merged. Will store somewhere that {X,Y,Z....} can be merged. 
 - Matrix M_Similarity is a matrix where M_Similarity[i][j] = similarity score between Tree_i and Tree_j.So basically will store how different the trees are from each other, and maybe we can achieve even more clusterization where the similarity score is below some treshhold.
 - This approach will also be flexible enough to add the keyword analisis to alter the similarity score when computed.
    
+The clustering in this stage was performed solely on visual logo features, without incorporating contextual data such as associated keywords, business names, or descriptions. This isolates the analysis to branding appearance only.
+
+**Stage 2 Result and Observations**
+The features used for each logo were:
+
+- Color statistics: mean_b, mean_g, mean_r (mean over the BGR color spectrum)
+
+- Color variability: std_b, std_g, std_r (standard deviation across BGR)
+
+- Shape/detail density: edge_density (estimated through edge detection metrics)
+
+Clustering Results:
+
+- Original number of trees: 1580
+
+- Normalized distance threshold: 0.1
+
+- Number of trees after merging: 639
+
+- Reduction: 941 trees merged (≈ 59.56% reduction)
+
+- A heatmap of the normalized distance matrix revealed a very prominent cluster containing approximately 200 trees, primarily corresponding to AAMCO Services. This serves as a strong validation of the method, as identical or near-identical logos are correctly grouped.
+
+- Other smaller but distinct clusters are also visible in the distance matrix visualization, suggesting the presence of additional branding reuse patterns across different business entities.
+
+This method proves especially useful for:
+
+- Detecting franchises and business chains that maintain consistent branding
+
+- Uncovering logo duplication, template reuse, or common design elements
+
+- Pre-processing before semantic or name-based clustering stages
+
+A dedicated folder, dataset/clusters, has been created to store the resulting clusters. Each cluster is saved as an .xml file with its associated tree IDs, making the output easily interpretable and integrable with downstream processes.
+**Stage 3**
+Now using the clusters created all the keywords from each cluster will be process to try and find similarities trough keywords. It will use `Word2Vec` algorithm to try and identify similarities.

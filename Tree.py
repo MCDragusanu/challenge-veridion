@@ -72,7 +72,7 @@ class Tree:
 def save_tree_to_file(file_path, tree, keywords, logo) -> bool:
     try:
         with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(f'<Tree id = "{tree.getId()}" root_element = {tree.getRoot()}>')
+            f.write(f'<Tree id = "{tree.getId()}" root_element = "{tree.getRoot()}">')
             f.write('\n\t<Routes>')
 
             urls , ids = tree.get_all_routes()
@@ -98,7 +98,7 @@ def save_tree_to_file(file_path, tree, keywords, logo) -> bool:
                     continue  # Prevent breaking the full file on one bad entry
 
             f.write('\n\t</Routes>')
-            f.write(f'</Tree>')
+            f.write(f'\n</Tree>')
             print(f"[✓] Tree saved to {file_path}")
         return True
 
