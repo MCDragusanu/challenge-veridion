@@ -141,23 +141,3 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
             print(f"[Error] Thread failed: {e}")
 
 
-print("\n[Verification] Comparing saved trees with in-memory trees...\n")
-
-for root, original_tree in tree_dictionary.items():
-    file_path = os.path.join(tree_directory, f"{root}.xml")
-    loaded_tree = load_tree_from_file(file_path)
-
-    if not loaded_tree:
-        print(f"[✗] Failed to load tree from {file_path}")
-        continue
-
-    original_routes = set(original_tree.get_all_routes())
-    loaded_routes = set(loaded_tree.get_all_routes())
-
-    if original_routes == loaded_routes:
-        print(f"[✓] Tree match for root '{root}'")
-    else:
-        print(f"[✗] Tree mismatch for root '{root}'")
-       
-    
-    

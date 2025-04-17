@@ -34,18 +34,26 @@ brand
 
 ## Stage 2
 
-In stage 2 i will try and reduce the number of trees. My first idea is to handle the second point from above.I will make pair wise comparisons between logos of different trees. The simplest approach would be to check if the features.
+In stage 2 i will try and reduce the number of trees. My first idea is to handle the second point from above.I will make pair wise comparisons between logos of different trees. The simplest approach would be to calculate a `metric / distance` between the logo features of 2 trees.
+
 Let's assume:
+
 - Tree_X has {l_1_x^t .... l_n_x^t } logos where l_i_x is the feature vector of a logo of tree of id X
+
 - Tree_Y has {l_1_y^t .... l_m_y^t } logos where l_i_y is the feature vector of a logo of tree of id Y
+
 - similarity =avg (euclidian(l_i_x , l_j_y)). If m != n, will be computed with euclidian(l_i_x , 0)||euclidian(l_j_y , 0).
+
 - In scenarios where 2 trees would be of size 1 and have similar images then similarity -> 0 and the trees can be merged. Will store somewhere that {X,Y,Z....} can be merged. 
+
 - Matrix M_Similarity is a matrix where M_Similarity[i][j] = similarity score between Tree_i and Tree_j.So basically will store how different the trees are from each other, and maybe we can achieve even more clusterization where the similarity score is below some treshhold.
+
 - This approach will also be flexible enough to add the keyword analisis to alter the similarity score when computed.
    
 The clustering in this stage was performed solely on visual logo features, without incorporating contextual data such as associated keywords, business names, or descriptions. This isolates the analysis to branding appearance only.
 
 **Stage 2 Result and Observations**
+
 The features used for each logo were:
 
 - Color statistics: mean_b, mean_g, mean_r (mean over the BGR color spectrum)
@@ -77,5 +85,6 @@ This method proves especially useful for:
 - Pre-processing before semantic or name-based clustering stages
 
 A dedicated folder, dataset/clusters, has been created to store the resulting clusters. Each cluster is saved as an .xml file with its associated tree IDs, making the output easily interpretable and integrable with downstream processes.
-**Stage 3**
+
+## Stage 3
 Now using the clusters created all the keywords from each cluster will be process to try and find similarities trough keywords. It will use `Word2Vec` algorithm to try and identify similarities.

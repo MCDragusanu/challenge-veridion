@@ -57,8 +57,6 @@ def compute_similarity_matrix(trees):
     similarity_matrix = np.zeros((n, n))
 
     for i in tqdm(range(n), desc="Computing similarity"):
-        # Set diagonal to 0 (identical to itself)
-        similarity_matrix[i][i] = 0
         
         for j in range(i + 1, n):
             tree_i = trees[i]
@@ -68,9 +66,9 @@ def compute_similarity_matrix(trees):
                 similarity_matrix[i][j] = similarity_matrix[j][i] = np.inf
                 continue
 
-            # Use minimum distance between any pair of logos as the tree similarity
             summed_distances = 0
             element_count = 0
+            
             for logo_i in tree_i:
                 for logo_j in tree_j:
                     # Ensure vectors are same length
@@ -87,7 +85,8 @@ def compute_similarity_matrix(trees):
                     summed_distances = summed_distances + distance
 
             average =  summed_distances / element_count if element_count > 0  else  np.inf           
-            # Store the minimum distance as our similarity measure
+            
+            # Store the average distance as our similarity measure
             similarity_matrix[i][j] = similarity_matrix[j][i] = average
 
     return similarity_matrix
@@ -160,6 +159,7 @@ mergeable_clusters = {k: v for k, v in cluster_mapping.items() if len(v) > 1}
 
 # Final stats
 original_tree_count = len(tree_numbers)
+
 # Each cluster with size > 1 contributes (size-1) to the reduction
 reduction = sum(len(cluster) - 1 for cluster in mergeable_clusters.values())
 merged_tree_count = original_tree_count - reduction
@@ -180,6 +180,7 @@ if os.path.exists(cluster_dir) :
 
 used_cluster_ids = []
 already_clustered_trees = []
+
 # Save clustering results
 with open('tree_clustering_results.txt', 'w') as f:
     f.write("TREE CLUSTERING RESULTS\n")
@@ -196,15 +197,11 @@ with open('tree_clustering_results.txt', 'w') as f:
         already_clustered_trees.append(trees)
 
 #now create the clusters with 1 members
-
 last_cluster_id = 0
-
 # Flatten the list of lists
 flattened_clustered_trees = set(chain.from_iterable(already_clustered_trees))
-
 # Find trees not already assigned to a cluster
 not_mapped_trees = [i for i in range(1, original_tree_count + 1) if i not in flattened_clustered_trees]
-
 
 for tree_id in not_mapped_trees:
     # Ensure unique cluster ID
