@@ -96,8 +96,10 @@ tree_directory = 'dataset/trees'
 logo_directory = 'dataset/logos'
 
 # Create required directories if they don't exist
-os.makedirs(tree_directory, exist_ok=True)
-os.makedirs(logo_directory, exist_ok=True)
+if not os.path.exists(tree_dictionary):
+    os.makedirs(tree_directory, exist_ok=True)
+if not os.path.exists(logo_directory):
+    os.makedirs(logo_directory, exist_ok=True)
 
 # Clean directories
 for folder in os.listdir(logo_directory):

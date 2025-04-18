@@ -53,7 +53,7 @@ for tree_number in tree_numbers:
         trees.append(features)
         current_index += 1
 
-def compute_improved_similarity_matrix(trees):
+def compute_similarity_matrix(trees):
     n = len(trees)
     similarity_matrix = np.zeros((n, n))
 
@@ -91,19 +91,17 @@ def compute_improved_similarity_matrix(trees):
                     similarities.append(sim)
             
             if similarities:
-                # Take the maximum similarity (minimum distance) as the representative measure
-                # This approach assumes that if at least one logo pair is very similar,
-                # the trees are potentially related
-                max_similarity = max(similarities)
+              
+                avg_similarity =np.mean(similarities)
                 # Convert to distance (lower means more similar)
-                distance = 1.0 - max_similarity
+                distance = 1.0 - avg_similarity
                 similarity_matrix[i][j] = similarity_matrix[j][i] = distance
             else:
                 similarity_matrix[i][j] = similarity_matrix[j][i] = 1.0  # Max distance
 
     return similarity_matrix
 
-similarity_matrix = compute_improved_similarity_matrix(trees)
+similarity_matrix = compute_similarity_matrix(trees)
 
 # Ensure all values are valid (no NaN or inf)
 similarity_matrix = np.nan_to_num(similarity_matrix, nan=1.0, posinf=1.0, neginf=1.0)
@@ -124,7 +122,7 @@ plt.title('Normalized Logo Tree Distance Matrix')
 plt.xlabel('Tree Index')
 plt.ylabel('Tree Index')
 plt.savefig('logo_distance_matrix_normalized.png')
-
+plt.show()
 # Plot dendrogram to help with threshold selection
 plt.figure(figsize=(14, 8))
 condensed_dist = squareform(similarity_matrix)
@@ -141,7 +139,7 @@ plt.close()  # Close plots to save memory
 # Apply hierarchical clustering using the normalized matrix
 # Try ward linkage which often produces more balanced clusters
 Z = linkage(condensed_dist, method='ward')
-distance_threshold = 0.15  # Adjusted threshold based on dendrogram
+distance_threshold = 0.05
 clusters = fcluster(Z, distance_threshold, criterion='distance')
 
 # Map clusters back to original tree numbers
@@ -212,8 +210,9 @@ with open('tree_clustering_results.txt', 'w') as f:
         used_cluster_ids.append(cid)
         already_clustered_trees.extend(trees)
 
-# Now create the clusters with 1 member
+# Handkle clusters with 1 tree
 last_cluster_id = max(used_cluster_ids) if used_cluster_ids else 0
+
 # Find trees not already assigned to a cluster
 not_mapped_trees = [i for i in tree_numbers if i not in already_clustered_trees]
 

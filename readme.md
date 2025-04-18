@@ -1,3 +1,28 @@
+## How to run
+
+## Running Secquence
+- Run each invidual stage in order
+
+- stage_1.py -> stage_2.py -> stage_3.py -> stage_4.py
+
+## Stage 1
+- Stage 1 resets all the trees and logo features and re-builds the dataset. Modify the file `Logo.py` to alter what features are extracted. It prepares the trees and the vector features for each logo. Modify the `Scraper.py` to alter the scraping algorithm
+
+## Stage 2
+- Stage 2 resets all the prior clusterization nad does the similarity clustering to detect repeating logos for franchise etc. **Requires that the tree and logo directories to be populated.**
+
+## Stage 3
+- Stage 3 does the more advanced clustering usign the k-means algorithm. **It requires the cluster trees & logos to be populated before running.**
+
+## Stage 4
+- Stage 4 is the one that outputs all the urls from clusters into dedicated text files for ease of use. Also has the option to download all the logos to be better for visualization.
+
+- run with `--flush` to clear all the previos results
+
+- run with `--no-logos` to skip the download of logos
+
+- run with `--verbose` for debugging output file
+
 **First Idea**
 
 So my plan is to process the dataset and construct a tree / trie data structure to handle the routes that are 
@@ -89,10 +114,10 @@ This method proves especially useful for:
 A dedicated folder, dataset/clusters, has been created to store the resulting clusters. Each cluster is saved as an .xml file with its associated tree IDs, making the output easily interpretable and integrable with downstream processes.
 
 ## Stage 3
-- In this stage, it is analyzed the semantic similarity between clusters of keywords, where each cluster consists of multiple trees and each tree contributes a list of keywords. To evaluate similarity across clusters, we use pre-trained GloVe embeddings (Global Vectors for Word Representation) to project keywords into a shared vector space.
+- In this stage, it is analyzed the semantic similarity between clusters of keywords, where each cluster consists of multiple trees and each tree contributes a list of keywords. To evaluate similarity across clusters, i use pre-trained GloVe embeddings (Global Vectors for Word Representation) to project keywords into a shared vector space.
 
 - Similarity Methodology: Max-Avg Cosine Distance
-We compute the distance between two keyword clusters using the max-avg cosine similarity technique:
+It computes the distance between two keyword clusters using the max-avg cosine similarity technique:
 
 - Embed all keywords from both clusters using GloVe vectors.
 
@@ -106,7 +131,8 @@ Compute pairwise cosine similarities between each keyword in cluster A and each 
 
 
 **Stage 3 Results**
-- It doens't seem to be that effective, maybe because the websites are in different languages and the words are very different, also is pretty slow. The keyword scraping isn't that effective because it s not very controllable in terms of the quality of the keywords, also it doen't take in consideration different languages of the websites.
+- It doens't seem to be that effective, maybe because the websites are in different languages and the words are very different, also is pretty slow. 
+- The keyword scraping isn't that effective because it s not very controllable in terms of the quality of the keywords, also it doen't take in consideration different languages of the websites.
 - it still reduces the number of clusters by a tenth but still some more room of improvement.
 - I think i should now focuse on better image clustering and feature extractions
 - Original number of clusters: 371
@@ -120,11 +146,18 @@ Compute pairwise cosine similarities between each keyword in cluster A and each 
 
 -After analysing the clustering i concluded that the current logo features and similarity approach is effective for detecing templated and reapeating logos, which is great, but lacks the depth necessary to distinguigh more complex shapes, so far it is somehow effective at grouping logos with similar colors
 
-- So i will add more features related to positioning , center of mass, shapes, countours, color distributions , histograms, hues, to add more depth to the feature vector
+- So i will add more features related to positioning , center of mass, shapes, countours, color distributions ,  hues, to add more depth to the feature vector
 
-- So i'm thinking of using a PCA to reduce the feature size and compute the distances and group them by how far away are from each other.
+- So the first issues to fix is to identify franchises and group them together. The goal would be to cluster together all the logos that have a very small similarity score. So i would use the stage 2 again but with a very small treshold to group all the logos together. After All the logos are together a `cluster representative` would be picked , the logo that is the most similar / closest to the center of gravity.
 
-- If this is not enough then i would go the route of CNN's and ML algorithms.
+- Next stage is to compare all the cluster representatives together and try and join them using a more advance model. I picked K-means with a cluster count of 75
 
+- It achieved a final clusterization of about 510 clusters which is good, considering that many clusters are made isolated trees , so about 200 such clusters are made of a single element.
+
+- The similarity works great with colors and acceptable with shapes
+
+-  In each of the cluster logo folder can be spoted leading features that dictate the rest of the style of the members , like color (red, blue , green) also shape (circular, square, etc)
+
+- There is still a lot of room of improvemnt in the image processing and image classifisaction, it uses a generic k-means clustering tehnique.
 
 

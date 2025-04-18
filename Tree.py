@@ -106,35 +106,4 @@ def save_tree_to_file(file_path, tree, keywords, logo) -> bool:
         print(f"[Error] Failed to save tree: {e}")
         return False
 
-def load_tree_from_file(file_path) -> Tree:
-    if not os.path.exists(file_path):
-        print(f"[✗] Couldn't load tree structure from: {file_path}")
-        return None
-
-    tree = Tree()
-
-    try:
-        with open(file_path, 'r') as f:
-            content = f.read()
-
-        # Extract content between <Routes>...</Routes>
-        routes_body_match = re.search(r"<Routes>([\s\S]*?)<\/Routes>", content)
-        if not routes_body_match:
-            print("[✗] No <Routes> block found in file.")
-            return None
-
-        routes_body = routes_body_match.group(1)
-
-        # Extract all URLs from <Route>...</Route>
-        urls = re.findall(r"<Route>(.*?)<\/Route>", routes_body)
-
-        for url in urls:
-            tree.insert_route(url.strip())
-
-        print(f"[✓] Tree loaded from {file_path}")
-        print(tree.get_all_routes())
-        return tree
-
-    except Exception as e:
-        print(f"[Error] Failed to load tree: {e}")
-        return None
+    
