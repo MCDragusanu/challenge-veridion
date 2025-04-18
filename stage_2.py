@@ -5,9 +5,10 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from collections import defaultdict
 from sklearn.preprocessing import normalize, MinMaxScaler
-from scipy.cluster.hierarchy import linkage, fcluster
-from scipy.spatial.distance import squareform
+from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
+from scipy.spatial.distance import squareform, cosine
 from itertools import chain
+
 logo_directory = 'dataset/logos'
 
 def build_tree_matrix(tree_number):
@@ -26,9 +27,9 @@ def build_tree_matrix(tree_number):
                 print(f"Error reading {file_path}: {e}")
     
     if feature_list:
-        tree_matrix = np.array(feature_list)
-        print(f"[✓] Tree_{tree_number}: {tree_matrix.shape[0]} logos loaded.")
-        return tree_matrix
+        # Convert to a list instead of directly to numpy array
+        print(f"[✓] Tree_{tree_number}: {len(feature_list)} logos loaded.")
+        return feature_list
     else:
         print(f"[✗] Tree_{tree_number}: No valid logo feature files.")
         return None
@@ -52,82 +53,67 @@ for tree_number in tree_numbers:
         trees.append(features)
         current_index += 1
 
-def compute_similarity_matrix(trees):
+def compute_improved_similarity_matrix(trees):
     n = len(trees)
     similarity_matrix = np.zeros((n, n))
 
     for i in tqdm(range(n), desc="Computing similarity"):
-        
         for j in range(i + 1, n):
             tree_i = trees[i]
             tree_j = trees[j]
 
-            if tree_i is None or tree_j is None:
-                similarity_matrix[i][j] = similarity_matrix[j][i] = np.inf
+            if tree_i is None or tree_j is None or len(tree_i) == 0 or len(tree_j) == 0:
+                similarity_matrix[i][j] = similarity_matrix[j][i] = 1.0  # Max distance
                 continue
 
-            summed_distances = 0
-            element_count = 0
+            # Compute pairwise cosine similarities between logos
+            # This is more robust than Euclidean distance for different sized feature vectors
+            similarities = []
             
             for logo_i in tree_i:
                 for logo_j in tree_j:
-                    # Ensure vectors are same length
-                    if len(logo_i) != len(logo_j):
-                        max_len = max(len(logo_i), len(logo_j))
-                        padded_i = np.zeros(max_len)
-                        padded_j = np.zeros(max_len)
-                        padded_i[:len(logo_i)] = logo_i
-                        padded_j[:len(logo_j)] = logo_j
-                        distance = np.linalg.norm(padded_i - padded_j)
-                    else:
-                        distance = np.linalg.norm(logo_i - logo_j)
-                    element_count = element_count + 1
-                    summed_distances = summed_distances + distance
-
-            average =  summed_distances / element_count if element_count > 0  else  np.inf           
+                    # Handle potential different feature sizes
+                    min_size = min(len(logo_i), len(logo_j))
+                    if min_size == 0:
+                        continue
+                    
+                    # Use the common features only
+                    logo_i_trimmed = logo_i[:min_size]
+                    logo_j_trimmed = logo_j[:min_size]
+                    
+                    # Skip if either vector is all zeros
+                    if not np.any(logo_i_trimmed) or not np.any(logo_j_trimmed):
+                        continue
+                    
+                    # Compute cosine similarity and convert to distance (1 - similarity)
+                    # Lower distance means more similar logos
+                    sim = 1.0 - cosine(logo_i_trimmed, logo_j_trimmed)
+                    similarities.append(sim)
             
-            # Store the average distance as our similarity measure
-            similarity_matrix[i][j] = similarity_matrix[j][i] = average
+            if similarities:
+                # Take the maximum similarity (minimum distance) as the representative measure
+                # This approach assumes that if at least one logo pair is very similar,
+                # the trees are potentially related
+                max_similarity = max(similarities)
+                # Convert to distance (lower means more similar)
+                distance = 1.0 - max_similarity
+                similarity_matrix[i][j] = similarity_matrix[j][i] = distance
+            else:
+                similarity_matrix[i][j] = similarity_matrix[j][i] = 1.0  # Max distance
 
     return similarity_matrix
 
-def save_cluster(cluster_id, cluster_trees, cluster_dir='dataset/clusters'):
-    try:
-        if not os.path.exists(cluster_dir):
-            os.makedirs(cluster_dir)  # Create intermediate directories if needed
+similarity_matrix = compute_improved_similarity_matrix(trees)
 
-        cluster_file = os.path.join(cluster_dir, f'cluster_{cluster_id}.xml')
-        with open(cluster_file, 'w', encoding='utf-8') as f:
-            f.write(f'<Cluster id="{cluster_id}">')
-            for tree in cluster_trees:
-                f.write(f'\n\t<Tree>{tree}</Tree>')
-            f.write('\n</Cluster>')
-        
-        print(f"[✓] Cluster {cluster_id} saved to {cluster_file}")
+# Ensure all values are valid (no NaN or inf)
+similarity_matrix = np.nan_to_num(similarity_matrix, nan=1.0, posinf=1.0, neginf=1.0)
 
-    except Exception as e:
-        print(f"[✗] Failed to save cluster {cluster_id}: {e}")
-
-similarity_matrix = compute_similarity_matrix(trees)
-
-# Replace any inf values with the maximum finite value
-max_finite = np.max(similarity_matrix[np.isfinite(similarity_matrix)])
-similarity_matrix[~np.isfinite(similarity_matrix)] = max_finite * 1.5
-
-# Normalize the similarity matrix to [0, 1] range
-# Create a copy to preserve the original for reference if needed
-raw_similarity_matrix = similarity_matrix.copy()
-
-# Use MinMaxScaler to normalize the matrix values between 0 and 1
-# First, we need to reshape the matrix to a 1D array
-matrix_shape = similarity_matrix.shape
-flattened_matrix = similarity_matrix.flatten()
-
-# Apply MinMaxScaler
+# Scale similarity matrix to [0, 1] range if needed
+# (values should already be between 0 and 1 from cosine distance)
 scaler = MinMaxScaler(feature_range=(0, 1))
-normalized_flat = scaler.fit_transform(flattened_matrix.reshape(-1, 1))
-
-# Reshape back to original matrix shape
+matrix_shape = similarity_matrix.shape
+flattened_matrix = similarity_matrix.flatten().reshape(-1, 1)
+normalized_flat = scaler.fit_transform(flattened_matrix)
 similarity_matrix = normalized_flat.reshape(matrix_shape)
 
 # Plot normalized distance matrix
@@ -138,14 +124,24 @@ plt.title('Normalized Logo Tree Distance Matrix')
 plt.xlabel('Tree Index')
 plt.ylabel('Tree Index')
 plt.savefig('logo_distance_matrix_normalized.png')
-plt.show()
+
+# Plot dendrogram to help with threshold selection
+plt.figure(figsize=(14, 8))
+condensed_dist = squareform(similarity_matrix)
+Z = linkage(condensed_dist, method='ward')  # Changed to ward linkage for better clusters
+dendrogram(Z, leaf_rotation=90)
+plt.title('Hierarchical Clustering Dendrogram')
+plt.xlabel('Tree Index')
+plt.ylabel('Distance')
+plt.axhline(y=0.15, color='r', linestyle='--', label='Threshold')
+plt.legend()
+plt.savefig('logo_clustering_dendrogram.png')
+plt.close()  # Close plots to save memory
 
 # Apply hierarchical clustering using the normalized matrix
-# Convert distance matrix to condensed form for linkage
-condensed_dist = squareform(similarity_matrix)
-Z = linkage(condensed_dist, method='average')  # Use average linkage
-
-distance_threshold = 0.1  
+# Try ward linkage which often produces more balanced clusters
+Z = linkage(condensed_dist, method='ward')
+distance_threshold = 0.15  # Adjusted threshold based on dendrogram
 clusters = fcluster(Z, distance_threshold, criterion='distance')
 
 # Map clusters back to original tree numbers
@@ -173,10 +169,28 @@ print(f"Number of clusters with multiple trees: {len(mergeable_clusters)}")
 
 cluster_dir = 'dataset/clusters'
 
-if os.path.exists(cluster_dir) :
+# Create clusters directory if it doesn't exist
+if not os.path.exists(cluster_dir):
+    os.makedirs(cluster_dir)
+else:
+    # Clean existing files
     files = os.listdir(cluster_dir)
     for file in files:
-        os.remove(os.path.join(cluster_dir,file))
+        os.remove(os.path.join(cluster_dir, file))
+
+def save_cluster(cluster_id, cluster_trees, cluster_dir='dataset/clusters'):
+    try:
+        cluster_file = os.path.join(cluster_dir, f'cluster_{cluster_id}.xml')
+        with open(cluster_file, 'w', encoding='utf-8') as f:
+            f.write(f'<Cluster id="{cluster_id}">')
+            for tree in sorted(cluster_trees):  # Sort trees for consistent output
+                f.write(f'\n\t<Tree>{tree}</Tree>')
+            f.write('\n</Cluster>')
+        
+        print(f"[✓] Cluster {cluster_id} saved to {cluster_file}")
+
+    except Exception as e:
+        print(f"[✗] Failed to save cluster {cluster_id}: {e}")
 
 used_cluster_ids = []
 already_clustered_trees = []
@@ -190,23 +204,25 @@ with open('tree_clustering_results.txt', 'w') as f:
     f.write(f"Number of trees after merging: {merged_tree_count}\n")
     f.write(f"Reduction: {reduction} trees ({reduction_percentage:.2f}%)\n\n")
     f.write("Mergeable Tree Clusters:\n")
+    
+    # Save clusters with multiple trees first
     for cid, trees in mergeable_clusters.items():
         f.write(f"Cluster {cid}: Trees {sorted(trees)} can be merged\n")
-        save_cluster(cid , trees)
+        save_cluster(cid, trees)
         used_cluster_ids.append(cid)
-        already_clustered_trees.append(trees)
+        already_clustered_trees.extend(trees)
 
-#now create the clusters with 1 members
-last_cluster_id = 0
-# Flatten the list of lists
-flattened_clustered_trees = set(chain.from_iterable(already_clustered_trees))
+# Now create the clusters with 1 member
+last_cluster_id = max(used_cluster_ids) if used_cluster_ids else 0
 # Find trees not already assigned to a cluster
-not_mapped_trees = [i for i in range(1, original_tree_count + 1) if i not in flattened_clustered_trees]
+not_mapped_trees = [i for i in tree_numbers if i not in already_clustered_trees]
 
 for tree_id in not_mapped_trees:
     # Ensure unique cluster ID
-    while last_cluster_id in used_cluster_ids:
-        last_cluster_id += 1
-
+    last_cluster_id += 1
     save_cluster(last_cluster_id, [tree_id])
     used_cluster_ids.append(last_cluster_id)
+
+print(f"\nAll {len(used_cluster_ids)} clusters saved to {cluster_dir}")
+print(f"Single-tree clusters: {len(not_mapped_trees)}")
+print(f"Multi-tree clusters: {len(mergeable_clusters)}")

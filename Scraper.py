@@ -1,11 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import re
+from collections import Counter
 
 def scrape_site_info(base_url):
     print(f"Scraping: {base_url}")
     try:
-        # Ensure full URL
         if not base_url.startswith("http"):
             base_url = "http://" + base_url
 
@@ -15,17 +16,16 @@ def scrape_site_info(base_url):
 
         logo = None
 
-        # 1. Look for <link rel="icon" ...> and similar
+        # --- Logo Detection ---
         icon_link = soup.find("link", rel=lambda val: val and 'icon' in val.lower())
         if icon_link and icon_link.get("href"):
             logo = urljoin(base_url, icon_link["href"])
 
-        # 2. If not found, look for <img> with 'logo' in any relevant attribute
         if not logo:
             for img in soup.find_all("img"):
                 attrs = ' '.join([
                     img.get('id') or '',
-                    img.get('class') and ' '.join(img.get('class')) or '',
+                    ' '.join(img.get('class') or []),
                     img.get('alt') or '',
                     img.get('src') or ''
                 ]).lower()
@@ -34,7 +34,6 @@ def scrape_site_info(base_url):
                     logo = urljoin(base_url, img.get('src'))
                     break
 
-        # 3. If still not found, fallback to largest image by size attributes
         if not logo:
             largest = {"area": 0, "src": None}
             for img in soup.find_all("img"):
@@ -49,20 +48,41 @@ def scrape_site_info(base_url):
             if largest["src"]:
                 logo = urljoin(base_url, largest["src"])
 
-        # Extract keywords
-        keywords = []
+        # --- Keyword Extraction ---
+        keywords = set()
+
+        # From meta tags
         meta_keywords = soup.find("meta", attrs={"name": "keywords"})
         if meta_keywords and meta_keywords.get("content"):
-            keywords = [kw.strip() for kw in meta_keywords["content"].split(",") if kw.strip()]
-        else:
-            # fallback: collect visible strong headers
-            headings = soup.find_all(["h1", "h2", "h3", "strong"])
-            keywords = list({word.lower() for h in headings for word in h.get_text(strip=True).split() if len(word) > 3})
+            keywords.update([kw.strip().lower() for kw in meta_keywords["content"].split(",") if kw.strip()])
+
+        meta_desc = soup.find("meta", attrs={"name": "description"})
+        if meta_desc and meta_desc.get("content"):
+            keywords.update(re.findall(r'\b[a-zA-Z]{4,}\b', meta_desc["content"].lower()))
+
+        # From title and headings
+        content_sources = []
+        if soup.title and soup.title.string:
+            content_sources.append(soup.title.string)
+
+        content_sources += [h.get_text(strip=True) for h in soup.find_all(["h1", "h2", "h3", "h4", "strong", "b"])]
+
+        for text in content_sources:
+            words = re.findall(r'\b[a-zA-Z]{4,}\b', text.lower())
+            keywords.update(words)
+
+        # Basic cleanup: remove overly generic terms
+        blacklist = {"home", "about", "login", "click", "learn", "read", "more", "contact", "info", "page", "terms"}
+        keywords = [kw for kw in keywords if kw not in blacklist]
+
+
+        word_counter = Counter(keywords)
+        top_keywords = [word for word, _ in word_counter.most_common(30)]
 
         return {
             "url": base_url,
             "logo": logo,
-            "keywords": keywords
+            "keywords": top_keywords
         }
 
     except Exception as e:

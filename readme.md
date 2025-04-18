@@ -3,11 +3,12 @@
 So my plan is to process the dataset and construct a tree / trie data structure to handle the routes that are 
 from the same root website. With the processing i can cluster together all the logos that are related to the same
 brand
-                   nike
-                /   \    \
-            shoes   sales about-us
-            /\
-        man women .........
+               nike
+            /   |   \
+        shoes  sales  about-us
+         /  \
+      men  women
+
 
 - All the logos that come from the children in this tree are related to the same brand / organisation and possibly for the same family of services / products.
 
@@ -62,15 +63,14 @@ The features used for each logo were:
 
 - Shape/detail density: edge_density (estimated through edge detection metrics)
 
-Clustering Results:
+## Clustering Results: 
 
+**Distance Recalculation** 
+- Changed so that the distance is a normalized euclidian distance and clustering improved by 6%
 - Original number of trees: 1580
-
-- Normalized distance threshold: 0.1
-
-- Number of trees after merging: 639
-
-- Reduction: 941 trees merged (≈ 59.56% reduction)
+- Distance threshold (normalized): 0.1
+- Number of trees after merging: 592
+- Reduction: 988 trees (62.53%)
 
 - A heatmap of the normalized distance matrix revealed a very prominent cluster containing approximately 200 trees, primarily corresponding to AAMCO Services. This serves as a strong validation of the method, as identical or near-identical logos are correctly grouped.
 
@@ -84,7 +84,47 @@ This method proves especially useful for:
 
 - Pre-processing before semantic or name-based clustering stages
 
+- From what i can see it is very good at detecting templated logos , but fails to capture essential diferences, the primary grouping factor is the color and the writting usually i can spot logos similar in colors and writtings. Somehow there are also some similar shapes involved but it's to crude to detect more advanced features
+
 A dedicated folder, dataset/clusters, has been created to store the resulting clusters. Each cluster is saved as an .xml file with its associated tree IDs, making the output easily interpretable and integrable with downstream processes.
 
 ## Stage 3
-Now using the clusters created all the keywords from each cluster will be process to try and find similarities trough keywords. It will use `Word2Vec` algorithm to try and identify similarities.
+- In this stage, it is analyzed the semantic similarity between clusters of keywords, where each cluster consists of multiple trees and each tree contributes a list of keywords. To evaluate similarity across clusters, we use pre-trained GloVe embeddings (Global Vectors for Word Representation) to project keywords into a shared vector space.
+
+- Similarity Methodology: Max-Avg Cosine Distance
+We compute the distance between two keyword clusters using the max-avg cosine similarity technique:
+
+- Embed all keywords from both clusters using GloVe vectors.
+
+Compute pairwise cosine similarities between each keyword in cluster A and each in cluster B, resulting in a similarity matrix.
+
+1. For each keyword in cluster A, take the maximum similarity it has with any keyword in cluster B. Repeat in the opposite direction (B → A).
+
+2. Compute the average of all maximum similarities obtained in both directions.
+
+3. Transform similarity to distance using: `distance = 1 - avg_max_similarity`
+
+
+**Stage 3 Results**
+- It doens't seem to be that effective, maybe because the websites are in different languages and the words are very different, also is pretty slow. The keyword scraping isn't that effective because it s not very controllable in terms of the quality of the keywords, also it doen't take in consideration different languages of the websites.
+- it still reduces the number of clusters by a tenth but still some more room of improvement.
+- I think i should now focuse on better image clustering and feature extractions
+- Original number of clusters: 371
+- Distance threshold (normalized): 0.45
+- Number of clusters after merging: 328
+- Reduction: 43 clusters (11.59%)
+- Number of mergeable groups: 22
+- In some scenarios was able to group in the same cluster (cluster 40.txt i think) all websites that are about job adveritising which quite interesting, but not very effective overall, it should be more focused on the image processings
+
+## Second Idea
+
+-After analysing the clustering i concluded that the current logo features and similarity approach is effective for detecing templated and reapeating logos, which is great, but lacks the depth necessary to distinguigh more complex shapes, so far it is somehow effective at grouping logos with similar colors
+
+- So i will add more features related to positioning , center of mass, shapes, countours, color distributions , histograms, hues, to add more depth to the feature vector
+
+- So i'm thinking of using a PCA to reduce the feature size and compute the distances and group them by how far away are from each other.
+
+- If this is not enough then i would go the route of CNN's and ML algorithms.
+
+
+
