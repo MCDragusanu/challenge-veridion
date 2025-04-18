@@ -1,5 +1,4 @@
-import os
-import re
+
 import xml.sax.saxutils as saxutils
 
 class TreeNode:

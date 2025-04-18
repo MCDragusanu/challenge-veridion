@@ -1,13 +1,10 @@
 import re
 import os
-import sys
+
 import argparse
-import urllib.request
 import urllib.parse
 import hashlib
 import logging
-from urllib.error import URLError
-from pathlib import Path
 import requests
 from PIL import Image
 from io import BytesIO

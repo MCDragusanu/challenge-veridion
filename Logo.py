@@ -96,7 +96,6 @@ def extract_features_from_logo(logo_bgr_matrix):
             features[f"hu_moment_{i}"] = -np.sign(hu_moments[i]) * np.log10(abs(hu_moments[i]) + 1e-10)
 
         # --- 5. Texture: Mean/Std of pixel differences (13 features) ---
-        # Use simple texture features instead of full Haralick for speed
         diffs = []
         for dx, dy in [(1, 0), (0, 1), (1, 1), (-1, 1)]:
             shifted = np.roll(gray, shift=(dy, dx), axis=(0, 1))
@@ -110,7 +109,6 @@ def extract_features_from_logo(logo_bgr_matrix):
             features[f"texture_dir_{i}_mean"] = np.mean(d)
             features[f"texture_dir_{i}_std"] = np.std(d)
 
-        # Padding to 36 (if you ever change features above)
         while len(features) < 36:
             features[f"padding_{len(features)}"] = 0.0
 

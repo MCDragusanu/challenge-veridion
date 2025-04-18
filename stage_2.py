@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from collections import defaultdict
-from sklearn.preprocessing import normalize, MinMaxScaler
+from sklearn.preprocessing import  MinMaxScaler
 from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
 from scipy.spatial.distance import squareform, cosine
 from itertools import chain
@@ -67,7 +67,6 @@ def compute_similarity_matrix(trees):
                 continue
 
             # Compute pairwise cosine similarities between logos
-            # This is more robust than Euclidean distance for different sized feature vectors
             similarities = []
             
             for logo_i in tree_i:
@@ -137,7 +136,6 @@ plt.savefig('logo_clustering_dendrogram.png')
 plt.close()  # Close plots to save memory
 
 # Apply hierarchical clustering using the normalized matrix
-# Try ward linkage which often produces more balanced clusters
 Z = linkage(condensed_dist, method='ward')
 distance_threshold = 0.05
 clusters = fcluster(Z, distance_threshold, criterion='distance')

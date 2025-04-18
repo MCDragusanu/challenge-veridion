@@ -1,5 +1,9 @@
 ## How to run
 
+1. Clone the project from github.
+2. Create the Envirovment (tested on .venv)
+3. Run `pip fastparquet lxml requests pandas beautifulsoup4 pandas numpy matplotlib tqdm scikit-learn scipy opencv-python pillow`
+
 ## Running Secquence
 - Run each invidual stage in order
 
@@ -9,7 +13,7 @@
 - Stage 1 resets all the trees and logo features and re-builds the dataset. Modify the file `Logo.py` to alter what features are extracted. It prepares the trees and the vector features for each logo. Modify the `Scraper.py` to alter the scraping algorithm
 
 ## Stage 2
-- Stage 2 resets all the prior clusterization nad does the similarity clustering to detect repeating logos for franchise etc. **Requires that the tree and logo directories to be populated.**
+- Stage 2 resets all the prior clusterization and performes the similarity clustering to detect repeating logos for franchise etc. **Requires that the tree and logo directories to be populated.**
 
 ## Stage 3
 - Stage 3 does the more advanced clustering usign the k-means algorithm. **It requires the cluster, trees & logos to be populated before running.**
@@ -167,4 +171,4 @@ Compute pairwise cosine similarities between each keyword in cluster A and each 
 
 - There is still a lot of room of improvemnt in the image processing and image classification, it uses a generic k-means clustering tehnique. If i used a more advanced tehniques of feature extractions like using CNN or Ml to extract advanced features or doing advanced image preprocessing for cleaning the data it would have a significant impact
 
-
+- Also i researched about PDQ which is algorithm created by Meta to compute image similarity fast and efficiently. I was very tempted to use it but i did some google searching and it seemed exaclty what i needed but didn't have time to implement it.

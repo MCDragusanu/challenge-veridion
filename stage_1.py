@@ -1,7 +1,7 @@
 import os
 import shutil
 import pandas as pd
-from Tree import TreeNode, Tree, load_tree_from_file, save_tree_to_file
+from Tree import  Tree, save_tree_to_file
 from Scraper import scrape_site_info    
 from Logo import get_bgr_matrix_from_url, extract_features_from_logo
 import concurrent.futures
@@ -96,7 +96,7 @@ tree_directory = 'dataset/trees'
 logo_directory = 'dataset/logos'
 
 # Create required directories if they don't exist
-if not os.path.exists(tree_dictionary):
+if not os.path.exists(tree_directory):
     os.makedirs(tree_directory, exist_ok=True)
 if not os.path.exists(logo_directory):
     os.makedirs(logo_directory, exist_ok=True)
