@@ -12,7 +12,7 @@
 - Stage 2 resets all the prior clusterization nad does the similarity clustering to detect repeating logos for franchise etc. **Requires that the tree and logo directories to be populated.**
 
 ## Stage 3
-- Stage 3 does the more advanced clustering usign the k-means algorithm. **It requires the cluster trees & logos to be populated before running.**
+- Stage 3 does the more advanced clustering usign the k-means algorithm. **It requires the cluster, trees & logos to be populated before running.**
 
 ## Stage 4
 - Stage 4 is the one that outputs all the urls from clusters into dedicated text files for ease of use. Also has the option to download all the logos to be better for visualization.
@@ -144,20 +144,27 @@ Compute pairwise cosine similarities between each keyword in cluster A and each 
 
 ## Second Idea
 
--After analysing the clustering i concluded that the current logo features and similarity approach is effective for detecing templated and reapeating logos, which is great, but lacks the depth necessary to distinguigh more complex shapes, so far it is somehow effective at grouping logos with similar colors
+-After analysing the clustering i concluded that the current logo features and similarity approach is effective for detecing templated and reapeating logos, which is great, but lacks the depth necessary to distinguigh more complex shapes, so far it is effective at grouping logos with similar colors
 
 - So i will add more features related to positioning , center of mass, shapes, countours, color distributions ,  hues, to add more depth to the feature vector
 
-- So the first issues to fix is to identify franchises and group them together. The goal would be to cluster together all the logos that have a very small similarity score. So i would use the stage 2 again but with a very small treshold to group all the logos together. After All the logos are together a `cluster representative` would be picked , the logo that is the most similar / closest to the center of gravity.
+- So the first issues to fix is to identify franchises and group them together. The goal would be to cluster together all the logos that have a very small similarity score. So i would use the stage 2 again but with a very small treshold to group all the logos together.
 
-- Next stage is to compare all the cluster representatives together and try and join them using a more advance model. I picked K-means with a cluster count of 75
+## Stage 3
+- In stage 3 after each cluster has been formed, a `cluster representative` will be picked - the one that si the closest to the mean of cluster, the one that represents the best the features of the group.
 
-- It achieved a final clusterization of about 510 clusters which is good, considering that many clusters are made isolated trees , so about 200 such clusters are made of a single element.
+- Then a K-Means clustering will be applied over the cluster representatives to make it more efficient , to minimize the number in the dataset that needs to be grouped toghether
+
+- After this all the new formed clusters will be joined and saved in the datset for future stages if needed
+
+**Result**
+
+- It achieved a final clusterization of about 510 clusters which is good, considering that many clusters are made isolated trees, so about 200 such clusters are made of a single element and about 50 - 100 clusters of less than 10 - 15. 
 
 - The similarity works great with colors and acceptable with shapes
 
--  In each of the cluster logo folder can be spoted leading features that dictate the rest of the style of the members , like color (red, blue , green) also shape (circular, square, etc)
+-  In each of the cluster logo folder can be spoted leading features that dictate the rest of the style of the members , like color (red, blue , green) also shape (circular, square, etc). It can identify similar logos that contain that particular shape or emblem as well as letters. I have seen a lot of the same logo "type" many logos that have the same style (ex :  Some writting in the middle and surrounded by color), or even embedded shapes that respect the same coloring schema (ex : in some clusters all the logo have the same color and shape in the same area).
 
-- There is still a lot of room of improvemnt in the image processing and image classifisaction, it uses a generic k-means clustering tehnique.
+- There is still a lot of room of improvemnt in the image processing and image classification, it uses a generic k-means clustering tehnique. If i used a more advanced tehniques of feature extractions like using CNN or Ml to extract advanced features or doing advanced image preprocessing for cleaning the data it would have a significant impact
 
 
